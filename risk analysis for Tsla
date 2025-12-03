@@ -1,0 +1,74 @@
+import yfinance as yf
+import pandas as pd
+import numpy as np
+
+ticker = "TSLA"
+market_ticker = "^GSPC"
+
+start_date = "2019-01-01"
+end_date   = None
+
+tsla = yf.download(ticker, start=start_date, end=end_date, auto_adjust=False)
+market = yf.download(market_ticker, start=start_date, end=end_date, auto_adjust=False)
+
+tsla_prices = tsla["Adj Close"]
+market_prices = market["Adj Close"]
+
+
+data = pd.concat([tsla_prices, market_prices], axis=1, join="inner")
+data.columns = ["TSLA", "MKT"]
+
+# Daily log returns
+returns = np.log(data / data.shift(1)).dropna()
+tsla_ret = returns["TSLA"]
+mkt_ret = returns["MKT"]
+
+# Basic risk
+trading_days = 252
+risk_free_rate = 0.00   # you can set e.g. 0.03 for 3%
+
+# Mean and volatility
+mean_daily = tsla_ret.mean()
+std_daily = tsla_ret.std()
+
+mean_annual = mean_daily * trading_days
+vol_annual = std_daily * np.sqrt(trading_days)
+
+# Sharpe ratio
+excess_return_annual = mean_annual - risk_free_rate
+sharpe_ratio = excess_return_annual / vol_annual
+
+cum_returns = (1 + tsla_ret).cumprod()
+rolling_max = cum_returns.cummax()
+drawdown = (cum_returns - rolling_max) / rolling_max
+max_drawdown = drawdown.min()
+
+confidence_level = 0.95
+alpha = 1 - confidence_level
+
+# Sort returns ascending
+sorted_returns = tsla_ret.sort_values()
+
+# Value at Risk (VaR)
+var_95 = sorted_returns.quantile(alpha)
+
+# Conditional VaR (CVaR) = average of worst alpha% returns
+cvar_95 = sorted_returns[sorted_returns <= var_95].mean()
+
+cov_matrix = np.cov(tsla_ret, mkt_ret)
+cov_tsla_mkt = cov_matrix[0, 1]
+var_mkt = cov_matrix[1, 1]
+beta = cov_tsla_mkt / var_mkt
+
+print("===== TESLA (TSLA) RISK ANALYSIS =====")
+print(f"Sample Period: {data.index[0].date()} to {data.index[-1].date()}")
+print()
+print("---- Returns & Volatility ----")
+print(f"Mean Daily Return:     {mean_daily:.4%}")
+print(f"Annualized Return:     {mean_annual:.2%}")
+print(f"Daily Volatility:      {std_daily:.4%}")
+print(f"Annualized Volatility: {vol_annual:.2%}")
+print()
+print("---- Risk Metrics ----")
+print(f"Sharpe Ratio (annual): {sharpe_ratio:.2f} (rf = {risk_free_rate:.2%})")
+print(f"Max Drawdown:          {max_drawdown:.2%}")
