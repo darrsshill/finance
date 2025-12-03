@@ -1,4 +1,4 @@
-Finance Projects & Learning Journey
+
 Hi! My name is Darshil Gandhi. I am currently pursuing my Master’s in Financial Technology (MS in FinTech) at the University of South Florida, graduating in December 2026.
 This repository is where I post my finance, FinTech, Python, data analysis, and quant-related projects as I continue learning and building my portfolio.
 I am actively looking for Summer 2026 internships in roles such as:
