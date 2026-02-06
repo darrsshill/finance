@@ -1,4 +1,4 @@
-# Finance & FinTech Projects
+ Finance & FinTech Projects
 
 Hi! I'm Darshil Gandhi, a Master's student in Financial Technology (MS FinTech) at the University of South Florida, graduating December 2026.
 
