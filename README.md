@@ -13,6 +13,9 @@ This repository contains my finance, FinTech, Python, and quantitative analysis 
 - Statistical pair trading strategy using Oracle and Amazon
 - Correlation analysis and spread-based signals
 
+### 🔹 Crypto Forecasting
+- Bitcoin (BTC) time-series forecast with geopolitical scenario analysis
+
 ### 🔹 Stock Tools
 - Apple stock return and calculator notebook
 
